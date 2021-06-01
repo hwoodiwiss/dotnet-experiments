@@ -12,7 +12,7 @@ The solution I've researched and tested is based on a system defined field on ev
 
 PUT or DELETE requests to the Cosmos DB can then contain a header named `If-Match`, where the value is the `_etag` of the resource that was read from the database. If this value does not match the current value stored in the database, a failure response will be sent with status code `412 Precondition Failure`, indicating that the record should be re-read before retrying.
 
-With this in mind, a consideration to be made when using the `_etag` for optimistic consistency handling, is that there needs to be a matching field in the data model for the serialized resources read from Cosmos, as otherwise the tag cannot be passed to the request headers, however your SDK of choice chooses to do that.
+With this in mind, a consideration to be made when using the `_etag` for optimistic concurrency handling, is that there needs to be a matching field in the data model for the serialized resources read from Cosmos, as otherwise the tag cannot be passed to the request headers, however your SDK of choice chooses to do that.
 
 ## Code
 
