@@ -25,7 +25,18 @@ namespace CosmosConflictResolution
             var item = _generator.GenerateItem();
             var id = item.Name;
 
-            await _database.UpsertAsync(item);
+            await _database.InsertAsync(item);
+
+            try
+            {
+                await _database.InsertAsync(item);
+            }
+            catch (CosmosException ex) when (ex.StatusCode == HttpStatusCode.Conflict)
+            {
+                Console.WriteLine($"Failed to insert item {item.Name}, item with that ID already exists");
+                var newItem = await ReadAndMutate(item.Id);
+                await _database.UpsertAsync(newItem);
+            }
 
             var itemOne = await ReadAndMutate(id);
             var itemTwo = await ReadAndMutate(id);
@@ -51,5 +62,6 @@ namespace CosmosConflictResolution
             Console.WriteLine(item.Description);
             return item;
         }
+
     }
 }

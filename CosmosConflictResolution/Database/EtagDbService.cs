@@ -19,6 +19,12 @@ namespace CosmosConflictResolution.Database
             _container = _cosmosClient.GetContainer(dbName, containerName);
         }
 
+        public Task InsertAsync(EtagModel data)
+        {
+            Console.WriteLine($"Upserting object with etag {data.Etag} at {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss.ffffff}");
+            return _container.CreateItemAsync(data, new PartitionKey(data.Name));
+        }
+
         public Task UpsertAsync(EtagModel data)
         {
             Console.WriteLine($"Upserting object with etag {data.Etag} at {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss.ffffff}");
