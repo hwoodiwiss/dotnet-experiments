@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,7 @@ namespace WinFormsDi
 {
     public abstract class ApplicationStartup
     {
+        public abstract void Configure(IConfigurationBuilder configurationBuilder);
         public abstract void ConfigureServices(IServiceCollection services);
 
         public static ApplicationStartup[] GetStartups()

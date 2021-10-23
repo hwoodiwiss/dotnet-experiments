@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace WinFormsDi
@@ -12,15 +13,26 @@ namespace WinFormsDi
         {
             ApplicationConfiguration.Initialize();
 
+            var configBuilder = new ConfigurationBuilder();
+            var startups = ApplicationStartup.GetStartups();
+
+            foreach(var startup in startups)
+            {
+                startup.Configure(configBuilder);
+            }
+
             var services = new ServiceCollection();
-            services.AddSingleton<frmMain>();
-            foreach(var startup in ApplicationStartup.GetStartups())
+
+            foreach(var startup in startups)
             {
                 startup.ConfigureServices(services);
             }
 
-            var sp = services.BuildServiceProvider();
+            services.AddSingleton<frmMain>();
+            var config = configBuilder.Build();
+            services.AddSingleton<IConfiguration>(config);
 
+            var sp = services.BuildServiceProvider();
             var form = sp.GetRequiredService<frmMain>();
             Application.Run(form);
         }
