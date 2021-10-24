@@ -1,28 +1,36 @@
 using Microsoft.Extensions.Options;
-using WinFormsDi.Services;
 using WinFormsNonBlockingAsync.Config;
+using WinFormsNonBlockingAsync.Extensions;
+using WinFormsNonBlockingAsync.Services;
 
-namespace WinFormsDi
+namespace WinFormsNonBlockingAsync;
+
+public partial class frmMain : Form
 {
-    public partial class frmMain : Form
+    private readonly IWaitService _waitService;
+    private readonly Configuration _config;
+
+    public frmMain(IWaitService waitService, IOptions<Configuration> config)
     {
-        private readonly IWaitService _waitService;
-        private readonly Configuration _config;
-
-        public frmMain(IWaitService waitService, IOptions<Configuration> config)
-        {
-            InitializeComponent();
-            this._waitService = waitService;
-            this._config = config.Value;
-        }
-
-        private async void button1_Click(object sender, EventArgs e)
-        {
-            button1.Enabled = false;
-            lblOut.Text = "Waiting...";
-            await _waitService.Wait(5000);
-            lblOut.Text = _config.TestConfig;
-            button1.Enabled = true;
-        }
+        InitializeComponent();
+        this._waitService = waitService;
+        this._config = config.Value;
     }
+
+    private async void btnWaitButton_Click(object sender, EventArgs e)
+    {
+        var originalText = btnWaitButton.Text;
+        await btnWaitButton.DisableUntilTaskComplete(_waitService.Wait(5000), () =>
+        {
+            btnWaitButton.Text = "Waiting...";
+            lblOut.Text = "";
+        },
+        () =>
+        {
+            btnWaitButton.Text = originalText;
+            lblOut.Text = _config.TestConfig;
+        });
+    }
+
+
 }

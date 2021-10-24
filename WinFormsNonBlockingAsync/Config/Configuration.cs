@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WinFormsNonBlockingAsync.Config
+namespace WinFormsNonBlockingAsync.Config;
+
+public class Configuration
 {
-    public class Configuration
-    {
-        public string TestConfig { get; set; } = "";
-    }
+    public string TestConfig { get; set; } = "";
 }

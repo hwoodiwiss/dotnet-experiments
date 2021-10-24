@@ -7,18 +7,17 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WinFormsDi
+namespace WinFormsNonBlockingAsync;
+
+public abstract class ApplicationStartup
 {
-    public abstract class ApplicationStartup
+    public abstract void Configure(IConfigurationBuilder configurationBuilder);
+    public abstract void ConfigureServices(IServiceCollection services);
+
+    public static ApplicationStartup[] GetStartups()
     {
-        public abstract void Configure(IConfigurationBuilder configurationBuilder);
-        public abstract void ConfigureServices(IServiceCollection services);
+        var types = Assembly.GetExecutingAssembly().GetTypes().Where(t => t.BaseType == typeof(ApplicationStartup));
 
-        public static ApplicationStartup[] GetStartups()
-        {
-            var types = Assembly.GetExecutingAssembly().GetTypes().Where(t => t.BaseType == typeof(ApplicationStartup));
-
-            return types.Select(s => Activator.CreateInstance(s)).Where(w => w != null).Cast<ApplicationStartup>().ToArray(); 
-        }
+        return types.Select(s => Activator.CreateInstance(s)).Where(w => w != null).Cast<ApplicationStartup>().ToArray();
     }
 }
