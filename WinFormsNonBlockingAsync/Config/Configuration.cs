@@ -8,6 +8,6 @@ namespace WinFormsNonBlockingAsync.Config
 {
     public class Configuration
     {
-        public string TestConfig { get; set; }
+        public string TestConfig { get; set; } = "";
     }
 }
